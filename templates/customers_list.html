@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <h2>Current Customers</h2>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if current_customers %}
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Address</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for c in current_customers %}
+        <tr>
+          <td>C{{ c[0] }}</td>
+          <td><a href="{{ url_for('customer_detail', customer_id=c[0]) }}">{{ c[1] }} {{ c[2] }}</a></td>
+          <td>{{ c[3] }}, {{ c[4] }} - {{ c[5] }}</td>
+          <td>{{ c[6] }}</td>
+          <td>{{ c[7] }}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('customer_detail', customer_id=c[0]) }}">View</a>
+            <a class="btn btn-sm" href="{{ url_for('reservation_start') }}?customer_id={{ c[0] }}">Reserve</a>
+            <a class="btn btn-sm btn-warning" href="{{ url_for('edit_customer', customer_id=c[0]) }}">Edit</a>
+            <form method="POST" action="{{ url_for('delete_customer', customer_id=c[0]) }}" style="display:inline-block;" onsubmit="return confirm('Delete this customer?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No current customers.</p>
+    {% endif %}
+  </div>
+
+  <div class="card mt-3">
+    <h2>Previous Customers</h2>
+    {% if previous_customers %}
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Address</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for c in previous_customers %}
+        <tr>
+          <td>C{{ c[0] }}</td>
+          <td><a href="{{ url_for('customer_detail', customer_id=c[0]) }}">{{ c[1] }} {{ c[2] }}</a></td>
+          <td>{{ c[3] }}, {{ c[4] }} - {{ c[5] }}</td>
+          <td>{{ c[6] }}</td>
+          <td>{{ c[7] }}</td>
+          <td>
+            <a class="btn btn-sm" href="{{ url_for('customer_detail', customer_id=c[0]) }}">View</a>
+            <a class="btn btn-sm btn-warning" href="{{ url_for('edit_customer', customer_id=c[0]) }}">Edit</a>
+            <form method="POST" action="{{ url_for('delete_customer', customer_id=c[0]) }}" style="display:inline-block;" onsubmit="return confirm('Delete this customer?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No previous customers.</p>
+    {% endif %}
+  </div>
+
+  <div class="mt-3">
+    <a href="{{ url_for('home') }}" class="btn btn-outline">Back to Home</a>
+  </div>
+{% endblock %}

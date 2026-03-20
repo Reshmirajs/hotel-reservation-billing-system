@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <script>
+    alert("Check out successfull");
+  </script>
+  <div class="card align-center">
+    <h2>Checkout Successful</h2>
+    <p>Customer checked out successfully.</p>
+    <div class="mt-3">
+      <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
+    </div>
+  </div>
+{% endblock %}

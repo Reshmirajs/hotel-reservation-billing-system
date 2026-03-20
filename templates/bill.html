@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="card">
+		<h2>Bill Summary</h2>
+		<p><strong>Customer:</strong> {{ data[0] }} {{ data[1] }}</p>
+		<p><strong>Room:</strong> {{ data[2] }}</p>
+		<p><strong>Check-in:</strong> {{ data[3] }}</p>
+		<p><strong>Check-out:</strong> {{ data[4] }}</p>
+		<p><strong>Days:</strong> {{ days }}</p>
+		<p><strong>Total Amount:</strong> {{ total }}</p>
+		<p><strong>Bill ID:</strong> {{ bill_id }}</p>
+	</div>
+
+	<div class="card mt-3">
+		<h4>Payment</h4>
+		<form method="POST" action="/payment">
+			<input type="hidden" name="bill_id" value="{{ bill_id if bill_id is defined else '' }}">
+			<input type="hidden" name="reservation_id" value="{{ reservation_id if reservation_id is defined else '' }}">
+			<div class="form-row">
+				<div class="col"><label>Amount</label><input name="amount" value="{{ total }}"></div>
+				<div class="col"><label>Payment Mode</label>
+					<select name="mode"><option value="Cash">Cash</option><option value="Card">Card</option><option value="UPI">UPI</option></select>
+				</div>
+			</div>
+			<div class="mt-2"><button class="btn" type="submit">Bill Paid</button></div>
+		</form>
+	</div>
+
+	<div class="mt-3"><a href="{{ url_for('home') }}" class="btn btn-outline">Back to Home</a></div>
+{% endblock %}

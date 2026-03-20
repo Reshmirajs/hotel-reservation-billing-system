@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <h2>Room {{ room.room_no }} - {{ room.room_type }}</h2>
+    <div class="row">
+      <div class="col-12 col-md-5">
+        <img src="https://picsum.photos/seed/room{{ room.room_no }}/600/400" class="img-fluid rounded">
+      </div>
+      <div class="col-12 col-md-7">
+        <p><strong>Room No:</strong> {{ room.room_no }}</p>
+        <p><strong>Type:</strong> {{ room.room_type }}</p>
+        <p><strong>Price per night:</strong> {{ room.price }}</p>
+        <p><strong>Status:</strong> {{ room.status }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <h4>Reservation</h4>
+    <form method="POST" action="{{ url_for('room_detail', room_no=room.room_no) }}">
+      {% if customer %}
+        <p>Reserving as: <strong>{{ customer[1] }} {{ customer[2] }}</strong> (ID: C{{ customer[0] }})</p>
+        <input type="hidden" name="customer_id" value="{{ customer[0] }}">
+      {% else %}
+        <div class="form-row">
+          <div class="col"><label>First name</label><input name="first_name" value="{{ request.args.get('first_name', '') }}"></div>
+          <div class="col"><label>Last name</label><input name="last_name" value="{{ request.args.get('last_name', '') }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="col"><label>Street</label><input name="street" value="{{ request.args.get('street', '') }}"></div>
+          <div class="col"><label>City</label><input name="city" value="{{ request.args.get('city', '') }}"></div>
+          <div class="col"><label>PIN</label><input name="pin" value="{{ request.args.get('pin', '') }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="col"><label>Email</label><input name="email" type="email" value="{{ request.args.get('email', '') }}"></div>
+          <div class="col"><label>Phone</label><input name="phone" value="{{ request.args.get('phone', '') }}"></div>
+        </div>
+        <div class="form-row">
+          <div class="col"><label>ID Proof Type</label><input name="id_proof_type" value="{{ request.args.get('id_proof_type', '') }}"></div>
+          <div class="col"><label>ID Proof Number</label><input name="id_proof_number" value="{{ request.args.get('id_proof_number', '') }}"></div>
+        </div>
+      {% endif %}
+
+      <div class="form-row mt-2">
+        <div class="col"><label>Check-in</label><input type="date" name="check_in" value="{{ check_in }}"></div>
+        <div class="col"><label>Expected Check Out Date</label><input type="date" name="check_out" value="{{ check_out }}"></div>
+      </div>
+
+      <input type="hidden" name="room_no" value="{{ room.room_no }}">
+      <div class="mt-3"><button class="btn" type="submit">Confirm Reservation</button></div>
+    </form>
+  </div>
+
+  <div class="mt-3">
+    <a href="{{ url_for('home') }}" class="btn btn-outline">Home</a>
+  </div>
+{% endblock %}

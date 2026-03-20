@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="card align-center">
+		<h2>Reservation Confirmed</h2>
+		<p>Your reservation id is R{{ reservation_id }}</p>
+		<div class="menu">
+			<a href="{{ url_for('reservations') }}" class="btn">View Reservations</a>
+			<a href="{{ url_for('home') }}" class="btn btn-outline">Home</a>
+		</div>
+	</div>
+{% endblock %}

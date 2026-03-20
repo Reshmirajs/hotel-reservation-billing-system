@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="home-hero-full" style="background-image: url('{{ url_for('static', filename='images/Located in Katara Towers on Lusail Marina, Raffles….jpeg') }}')">
+		<div class="hero-overlay">
+			<h1 class="title">Grand Palace Hotel</h1>
+			<p class="lead">Welcome to Grand Palace — comfort, convenience and curated amenities.</p>
+			<div class="menu mt-3">
+				<a class="btn" href="{{ url_for('reservation_start') }}">Make a Reservation</a>
+			</div>
+		</div>
+	</div>
+	<div class="main-container with-hero">
+	</div>
+
+	<div class="card mt-3">
+		<h3>Rooms & Amenities</h3>
+		<div class="row">
+			<div class="col-12 col-md-4">
+				<h5>Standard Room</h5>
+				<p>Comfortable room with queen bed, work desk, free Wi-Fi, and ensuite bathroom.</p>
+				<ul>
+					<li>Queen bed</li>
+					<li>Free Wi-Fi</li>
+					<li>Air conditioning</li>
+					<li>Tea / Coffee maker</li>
+				</ul>
+			</div>
+			<div class="col-12 col-md-4">
+				<h5>Deluxe Room</h5>
+				<p>Spacious room with king bed, seating area, minibar and enhanced views.</p>
+				<ul>
+					<li>King bed</li>
+					<li>Minibar</li>
+					<li>Work desk + Lounge seating</li>
+					<li>Complimentary breakfast</li>
+				</ul>
+			</div>
+			<div class="col-12 col-md-4">
+				<h5>Suite</h5>
+				<p>Large suite with separate living area, premium toiletries and priority services.</p>
+				<ul>
+					<li>Separate living room</li>
+					<li>Priority check-in</li>
+					<li>Free airport pickup (on request)</li>
+					<li>Luxury toiletries</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="card mt-3">
+		<h3>Hotel Amenities</h3>
+		<ul class="row">
+			<li class="col-6">24/7 Reception</li>
+			<li class="col-6">On-site restaurant</li>
+			<li class="col-6">Free parking</li>
+			<li class="col-6">Gym & Spa</li>
+			<li class="col-6">Wheelchair accessible</li>
+			<li class="col-6">Laundry service</li>
+		</ul>
+	</div>
+{% endblock %}

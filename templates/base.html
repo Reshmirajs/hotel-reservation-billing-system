@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grand Palace Hotel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-brand">Grand Palace</div>
+        <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle menu">☰</button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('reservation_start') }}"><span class="label">Make Reservation</span></a>
+        <a href="{{ url_for('reservations') }}"><span class="label">Reservations</span></a>
+        <a href="{{ url_for('customers_list') }}"><span class="label">Customer Details</span></a>
+        <a href="{{ url_for('checkout') }}"><span class="label">Checkout</span></a>
+        <a href="{{ url_for('home') }}"><span class="label">Home</span></a>
+      </nav>
+    </aside>
+
+    <main class="main-container">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    // sidebar toggle for small screens
+    (function(){
+      var btn = document.getElementById('sidebarToggle');
+      var sb = document.getElementById('sidebar');
+      if(!btn || !sb) return;
+      btn.addEventListener('click', function(){
+        sb.classList.toggle('collapsed');
+      });
+    })();
+  </script>
+
+</body>
+</html>

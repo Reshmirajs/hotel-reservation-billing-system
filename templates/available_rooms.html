@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="card">
+		<h2>Available Rooms</h2>
+		<table>
+			<thead>
+				<tr><th>Room</th><th>Type</th><th>Price</th><th>Select</th></tr>
+			</thead>
+			<tbody>
+			{% for r in rooms %}
+				<tr>
+					<td>{{ r[0] }}</td>
+					<td>{{ r[1] }}</td>
+					<td>{{ r[2] }}</td>
+					<td><a class="btn" href="{{ url_for('room_detail', room_no=r[0], first_name=form_data.get('first_name', ''), last_name=form_data.get('last_name', ''), street=form_data.get('street', ''), city=form_data.get('city', ''), pin=form_data.get('pin', ''), email=form_data.get('email', ''), phone=form_data.get('phone', ''), id_proof_type=form_data.get('id_proof_type', ''), id_proof_number=form_data.get('id_proof_number', ''), check_in=form_data.get('check_in', ''), check_out=form_data.get('check_out', '')) }}">Reserve</a></td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

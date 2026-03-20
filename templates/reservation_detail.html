@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <h2>Reservation Details</h2>
+    <p><strong>Reservation ID:</strong> R{{ reservation.reservation_id }}</p>
+    <p><strong>Room:</strong> {{ reservation.room_no }}</p>
+    <p><strong>Check-in:</strong> {{ reservation.check_in }}</p>
+    <p><strong>Check-out:</strong> {{ reservation.check_out }}</p>
+  </div>
+
+  <div class="card mt-3">
+    <h4>Customer</h4>
+    <p><strong>ID:</strong> <a href="{{ url_for('customer_detail', customer_id=customer.customer_id) }}">C{{ customer.customer_id }}</a></p>
+    <p><strong>Name:</strong> {{ customer.first_name }} {{ customer.last_name }}</p>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Phone:</strong> {{ customer.phone }}</p>
+  </div>
+
+  <div class="mt-3">
+    <a href="{{ url_for('reservations') }}" class="btn btn-outline">Back to Reservations</a>
+    <a href="{{ url_for('home') }}" class="btn btn-outline">Home</a>
+  </div>
+{% endblock %}

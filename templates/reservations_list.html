@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="card">
+		<h2>Current Reservations</h2>
+		<table>
+			<thead>
+				<tr><th>ID</th><th>Customer</th><th>Room</th><th>Check In</th><th>Check Out</th></tr>
+			</thead>
+			<tbody>
+			{% for r in data %}
+				<tr>
+					<td><a href="/reservation/{{ r[0] }}">R{{ r[0] }}</a></td>
+					<td><a href="/customer/{{ r[1] }}">C{{ r[1] }} - {{ r[2] }} {{ r[3] }}</a></td>
+					<td>{{ r[4] }}</td>
+					<td>{{ r[5] }}</td>
+					<td>{{ r[6] }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+:root{
+	--nav-bg: #0b3d91; /* dark blue */
+	--accent: #0b67d1;
+	--muted: #f5f7fb;
+	--text: #dde0e5;
+}
+
+*{box-sizing:border-box}
+
+body{
+	font-family: Inter, Arial, sans-serif;
+	background: var(--muted);
+	color: var(--text);
+	margin:0;
+}
+
+.navbar{
+	background: var(--nav-bg);
+	color: white;
+	padding: 10px 0;
+}
+.nav-container{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+
+/* Sidebar layout */
+.app-shell{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--nav-bg);color:white;padding:20px 12px;flex-shrink:0}
+.sidebar-brand{font-weight:800;font-size:20px;margin-bottom:18px}
+.sidebar-nav{display:flex;flex-direction:column;gap:10px}
+.sidebar-nav a{color:white;text-decoration:none;padding:10px;border-radius:6px;display:block}
+.sidebar-nav a .label{display:inline-block}
+.sidebar-nav a:hover{background:rgba(255,255,255,0.06)}
+
+.main-container{flex:1;padding:22px}
+
+/* collapsed sidebar for small screens */
+.sidebar.collapsed{width:56px}
+.sidebar.collapsed .label{display:none}
+.sidebar.collapsed .sidebar-brand{font-size:14px}
+.sidebar-toggle{display:none;background:transparent;border:none;color:white;font-size:20px;margin-left:8px}
+
+@media(max-width:800px){
+	.sidebar{position:fixed;left:0;top:0;height:100vh;z-index:40}
+	.sidebar-toggle{display:inline-block}
+	.main-container{margin-left:56px;padding:18px}
+}
+
+.card{background:white;border-radius:8px;padding:18px;box-shadow:0 6px 18px rgba(11,61,145,0.08);}
+
+h1.title{color:var(--nav-bg);font-size:36px;margin:6px 0}
+
+.hotelimg{width:100%;max-width:1100px;border-radius:8px;margin:10px 0}
+
+/* Homepage hero using a background image */
+.home-hero{height:320px;border-radius:8px;overflow:hidden;position:relative;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:white}
+.home-hero .hero-overlay{background:linear-gradient(rgba(11,61,145,0.55), rgba(11,61,145,0.25));width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.home-hero .title{color: #fff}
+.home-hero .lead{color: rgba(255,255,255,0.92);max-width:900px}
+
+/* Full-page hero variant */
+.home-hero-full{height:100vh;width:100%;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;position:relative}
+.home-hero-full .hero-overlay{position:absolute;inset:0;background:linear-gradient(rgba(11,61,145,0.55), rgba(11,61,145,0.25));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;padding:24px;text-align:center}
+.home-hero-full .title{font-size:48px;margin:0}
+.home-hero-full .lead{font-size:18px;max-width:900px}
+
+/* ensure hero title appears white (overrides generic h1.title) */
+.home-hero-full .title{color:#fff}
+
+/* make sure main content doesn't get hidden under fixed hero when used */
+.main-container.with-hero{padding-top:0}
+
+.menu{margin-top:18px}
+
+.btn, button, .btn-primary{padding:10px 16px;background:var(--nav-bg);color:white;border:none;border-radius:6px;margin:6px;font-weight:600}
+.btn-outline{background:white;color:var(--nav-bg);border:1px solid var(--nav-bg)}
+
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eef3fb;text-align:left}
+th{background:#f7fbff;color:var(--nav-bg)}
+
+input, select, textarea{padding:10px;margin:6px 0;width:100%;max-width:480px;border:1px solid #e3eefb;border-radius:6px}
+
+form{display:flex;flex-direction:column}
+
+@media(min-width:700px){
+	.form-row{display:flex;gap:12px}
+	.form-row .col{flex:1}
+}
+
+.align-center{text-align:center}
