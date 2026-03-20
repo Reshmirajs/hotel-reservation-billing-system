@@ -1,4 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
+
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 from flask_mysqldb import MySQL
 from datetime import date
 import re
@@ -54,49 +61,6 @@ def reservation_start():
     return render_template('reservation_start.html')
 
 
-# CONFIRM RESERVATION
-@app.route("/confirm_reservation", methods=["POST"])
-def confirm_reservation():
-
-    customer_id = request.form["customer_id"]
-    room_no = request.form["room_no"]
-    check_in = request.form["check_in"]
-    check_out = request.form["check_out"]
-
-    # Validate dates
-    try:
-        in_date = date.fromisoformat(check_in)
-        out_date = date.fromisoformat(check_out)
-        if in_date >= out_date:
-            return "Invalid dates: check-out must be after check-in", 400
-    except Exception:
-        return "Invalid date format", 400
-
-    cur = mysql.connection.cursor()
-    # Re-check availability: ensure no overlapping reservations for this room
-    cur.execute('''
-        SELECT COUNT(*) FROM Reservation
-        WHERE room_no=%s AND NOT (check_out_date <= %s OR check_in_date >= %s)
-    ''', (room_no, check_in, check_out))
-    conflict = cur.fetchone()[0]
-    if conflict > 0:
-        return "Room not available for selected dates", 400
-
-    cur.execute("""
-    INSERT INTO Reservation
-    (customer_id,room_no,check_in_date,check_out_date)
-    VALUES (%s,%s,%s,%s)
-    """,(customer_id,room_no,check_in,check_out))
-
-    mysql.connection.commit()
-
-    reservation_id = cur.lastrowid
-
-    cur.execute("UPDATE Room SET status='Booked' WHERE room_no=%s",(room_no,))
-    mysql.connection.commit()
-
-    return render_template("reservation_success.html",
-                           reservation_id=reservation_id)
 
 
 # VIEW RESERVATIONS
