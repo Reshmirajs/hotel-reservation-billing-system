@@ -1,41 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, Response, g
+from flask import Flask, render_template, request, redirect, url_for, Response
+
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
+from flask_mysqldb import MySQL
 from datetime import date
 import re
 import csv
 import io
 import config
 from werkzeug.exceptions import HTTPException
-import pymysql
 
 app = Flask(__name__)
 
-# load DB config
+# load DB config and init MySQL
 app.config['MYSQL_HOST'] = config.MYSQL_HOST
 app.config['MYSQL_USER'] = config.MYSQL_USER
 app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
 app.config['MYSQL_DB'] = config.MYSQL_DB
-
-class MySQL:
-    def __init__(self, app):
-        pass
-    
-    @property
-    def connection(self):
-        if 'db' not in g:
-            g.db = pymysql.connect(
-                host=app.config['MYSQL_HOST'],
-                user=app.config['MYSQL_USER'],
-                password=app.config['MYSQL_PASSWORD'],
-                database=app.config['MYSQL_DB']
-            )
-        return g.db
-
 mysql = MySQL(app)
-
-@app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'db'):
-        g.db.close()
 
 def _log_exception(e):
     import traceback
