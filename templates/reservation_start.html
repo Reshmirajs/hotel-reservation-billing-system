@@ -35,11 +35,85 @@
 
 			<h5 class="mt-3">Reservation Dates</h5>
 			<div class="form-row">
-				<div class="col"><label>Check In</label><input type="date" name="check_in"></div>
-				<div class="col"><label>Expected Check Out Date</label><input type="date" name="check_out"></div>
+				<div class="col">
+					<label>Check In</label>
+					<input type="date" id="check_in" name="check_in" min="{{ today }}" required>
+					<span id="check_in_warn" class="date-warn"></span>
+				</div>
+				<div class="col">
+					<label>Expected Check Out Date</label>
+					<input type="date" id="check_out" name="check_out" min="{{ today }}" required>
+					<span id="check_out_warn" class="date-warn"></span>
+				</div>
 			</div>
 
 			<div class="align-center"><button class="btn" type="submit">Check Available Rooms</button></div>
 		</form>
 	</div>
+
+<style>
+  .date-warn {
+    display: block;
+    color: #c0392b;
+    background: #fdf0ef;
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .date-warn:empty { display: none; }
+</style>
+
+<script>
+  (function () {
+    var today = "{{ today }}";
+
+    var checkInEl  = document.getElementById('check_in');
+    var checkOutEl = document.getElementById('check_out');
+    var checkInWarn  = document.getElementById('check_in_warn');
+    var checkOutWarn = document.getElementById('check_out_warn');
+
+    function validateCheckIn() {
+      var val = checkInEl.value;
+      if (!val) { checkInWarn.textContent = ''; return true; }
+      if (val < today) {
+        checkInWarn.textContent = '⚠ Check-in date cannot be in the past.';
+        checkInEl.setCustomValidity('Check-in date cannot be in the past.');
+        return false;
+      }
+      checkInWarn.textContent = '';
+      checkInEl.setCustomValidity('');
+      // update check-out minimum whenever check-in changes
+      checkOutEl.min = val;
+      validateCheckOut();
+      return true;
+    }
+
+    function validateCheckOut() {
+      var cin  = checkInEl.value;
+      var cout = checkOutEl.value;
+      if (!cout) { checkOutWarn.textContent = ''; return true; }
+      if (cout < today) {
+        checkOutWarn.textContent = '⚠ Check-out date cannot be in the past.';
+        checkOutEl.setCustomValidity('Check-out date cannot be in the past.');
+        return false;
+      }
+      if (cin && cout <= cin) {
+        checkOutWarn.textContent = '⚠ Check-out must be after check-in.';
+        checkOutEl.setCustomValidity('Check-out must be after check-in.');
+        return false;
+      }
+      checkOutWarn.textContent = '';
+      checkOutEl.setCustomValidity('');
+      return true;
+    }
+
+    checkInEl.addEventListener('change', validateCheckIn);
+    checkInEl.addEventListener('input',  validateCheckIn);
+    checkOutEl.addEventListener('change', validateCheckOut);
+    checkOutEl.addEventListener('input',  validateCheckOut);
+  })();
+</script>
 {% endblock %}

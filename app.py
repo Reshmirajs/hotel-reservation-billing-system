@@ -49,16 +49,38 @@ def home():
 # Minimal reservation start route (keeps original template behavior)
 @app.route('/reservation_start', methods=['GET', 'POST'])
 def reservation_start():
+    today = date.today().isoformat()
     if request.method == 'POST':
+        check_in = request.form.get('check_in')
+        check_out = request.form.get('check_out')
+        
+        try:
+            in_date = date.fromisoformat(check_in)
+            out_date = date.fromisoformat(check_out)
+            if in_date < date.today():
+                return "Check-in date cannot be in the past", 400
+            if in_date >= out_date:
+                return "Invalid dates: check-out must be after check-in", 400
+        except Exception:
+            return "Invalid date format", 400
+
         try:
             cur = mysql.connection.cursor()
-            cur.execute("SELECT * FROM Room WHERE status='Available'")
+            # Find rooms that do not have overlapping reservations for the requested dates
+            cur.execute('''
+                SELECT * FROM Room 
+                WHERE room_no NOT IN (
+                    SELECT room_no FROM Reservation 
+                    WHERE check_out_date > %s AND check_in_date < %s
+                )
+            ''', (check_in, check_out))
             rooms = cur.fetchall()
             cur.close()
-        except Exception:
+        except Exception as e:
+            _log_exception(e)
             rooms = []
         return render_template('available_rooms.html', rooms=rooms, form_data=request.form)
-    return render_template('reservation_start.html')
+    return render_template('reservation_start.html', today=today)
 
 
 # VIEW RESERVATIONS
@@ -192,6 +214,8 @@ def room_detail(room_no):
         try:
             in_date = date.fromisoformat(check_in)
             out_date = date.fromisoformat(check_out)
+            if in_date < date.today():
+                return "Check-in date cannot be in the past", 400
             if in_date >= out_date:
                 return "Invalid dates: check-out must be after check-in", 400
         except Exception:

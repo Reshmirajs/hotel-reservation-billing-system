@@ -43,8 +43,16 @@
       {% endif %}
 
       <div class="form-row mt-2">
-        <div class="col"><label>Check-in</label><input type="date" name="check_in" value="{{ check_in }}"></div>
-        <div class="col"><label>Expected Check Out Date</label><input type="date" name="check_out" value="{{ check_out }}"></div>
+        <div class="col">
+          <label>Check-in</label>
+          <input type="date" id="check_in" name="check_in" value="{{ check_in }}" min="{{ check_in if check_in else '' }}" required>
+          <span id="check_in_warn" class="date-warn"></span>
+        </div>
+        <div class="col">
+          <label>Expected Check Out Date</label>
+          <input type="date" id="check_out" name="check_out" value="{{ check_out }}" min="{{ check_in if check_in else '' }}" required>
+          <span id="check_out_warn" class="date-warn"></span>
+        </div>
       </div>
 
       <input type="hidden" name="room_no" value="{{ room.room_no }}">
@@ -55,4 +63,77 @@
   <div class="mt-3">
     <a href="{{ url_for('home') }}" class="btn btn-outline">Home</a>
   </div>
+
+<style>
+  .date-warn {
+    display: block;
+    color: #c0392b;
+    background: #fdf0ef;
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .date-warn:empty { display: none; }
+</style>
+
+<script>
+  (function () {
+    var today = new Date().toISOString().split('T')[0];
+
+    var checkInEl   = document.getElementById('check_in');
+    var checkOutEl  = document.getElementById('check_out');
+    var checkInWarn  = document.getElementById('check_in_warn');
+    var checkOutWarn = document.getElementById('check_out_warn');
+
+    // Set the minimum for both fields to today on load
+    if (!checkInEl.min) checkInEl.min = today;
+    if (!checkOutEl.min) checkOutEl.min = today;
+
+    function validateCheckIn() {
+      var val = checkInEl.value;
+      if (!val) { checkInWarn.textContent = ''; return true; }
+      if (val < today) {
+        checkInWarn.textContent = '⚠ Check-in date cannot be in the past.';
+        checkInEl.setCustomValidity('Check-in date cannot be in the past.');
+        return false;
+      }
+      checkInWarn.textContent = '';
+      checkInEl.setCustomValidity('');
+      checkOutEl.min = val;
+      validateCheckOut();
+      return true;
+    }
+
+    function validateCheckOut() {
+      var cin  = checkInEl.value;
+      var cout = checkOutEl.value;
+      if (!cout) { checkOutWarn.textContent = ''; return true; }
+      if (cout < today) {
+        checkOutWarn.textContent = '⚠ Check-out date cannot be in the past.';
+        checkOutEl.setCustomValidity('Check-out date cannot be in the past.');
+        return false;
+      }
+      if (cin && cout <= cin) {
+        checkOutWarn.textContent = '⚠ Check-out must be after check-in.';
+        checkOutEl.setCustomValidity('Check-out must be after check-in.');
+        return false;
+      }
+      checkOutWarn.textContent = '';
+      checkOutEl.setCustomValidity('');
+      return true;
+    }
+
+    checkInEl.addEventListener('change', validateCheckIn);
+    checkInEl.addEventListener('input',  validateCheckIn);
+    checkOutEl.addEventListener('change', validateCheckOut);
+    checkOutEl.addEventListener('input',  validateCheckOut);
+
+    // Run on load in case values are pre-filled
+    validateCheckIn();
+    validateCheckOut();
+  })();
+</script>
 {% endblock %}
