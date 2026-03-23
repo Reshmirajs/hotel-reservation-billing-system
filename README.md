@@ -1,52 +1,82 @@
-# Hotel Management System (DBMS Project)
+# 🏨 Grand Palace Hotel Management System
 
-Flask-based hotel reservation & billing demo app — suitable for demo or classroom presentation.
+A full-featured, lightweight **Hotel Management and Billing System** designed with Python, Flask, and MySQL. It features a beautifully simple dark-themed user interface, comprehensive database constraints for reliability, and a clean, maintainable codebase ready for localized deployment or production release using platforms like Vercel.
 
-Quick start (presentation-ready)
+---
 
-1. Create and activate a Python virtual environment, then install dependencies:
+## ✨ Features
+- **Live Room Bookings:** View available rooms dynamically, set check-in/check-out dates, and secure a reservation directly mapping to registered customers.
+- **Customer Management System:** Complete, persistent records of every customer who has stayed in the hotel. Track previous customers and current customers efficiently.
+- **Robust Billing & Payments:** An integrated checkout portal that automatically generates invoices based on room stay duration. Payments map directly to reservations avoiding data cascades, maintaining full historical billing records.
+- **CSV Exports:** Admins can export all active and historical customer records immediately to `.csv` data dumps.
+- **Minimal Server Dependencies:** Fast, light-weight back-end. Uses `PyMySQL` allowing serverless functionality without heavy system-level drivers.
 
-Windows PowerShell:
+## 🛠️ Tech Stack
+- **Backend**: Python 3.x, Flask
+- **Database**: MySQL 8.x, PyMySQL, cryptography
+- **Frontend**: HTML5, Vanilla CSS3 (Custom Dark/Glassmorphic aesthetics), Jinja2 Templating
+
+## 🗄️ Database Architecture
+The system relies on five tightly-coupled relational tables:
+1. **`Customer`**: Core customer information (Name, Contact, Address, ID Proof).
+2. **`Room`**: Hotel inventory details (Room No, Type, Price, Availability Status).
+3. **`Reservation`**: Logs the linking of Customers to Rooms, storing active dates.
+4. **`Bill`**: Generates upon checkout relative to the `Reservation`.
+5. **`Payment`**: Records individual financial transactions corresponding to generated `Bill`s.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+Make sure to have the following installed locally on your system:
+- **Python 3.8+**
+- **MySQL Server** (running locally or on a cloud provider like PlanetScale)
+
+### 2. Clone and Install Dependencies
+Create a virtual environment to isolate the project requirements, and install packages.
+
+**Windows (PowerShell):**
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-2. Configure the database connection in `config.py` (MySQL credentials). The app assumes tables: `Customer`, `Room`, `Reservation`, `Bill`, and `Payment`.
-
-3. Run the server:
-
-```powershell
-setx SECRET_KEY "your-secret"
-flask run
+**Mac/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Presentation notes
+### 3. Database Configuration
+By default, the application will look for `.env` variables or fallback to defaults in `config.py`. Update these to reflect your local connection strings.
 
-- The repository excludes the local virtual environment and logs via `.gitignore`.
-- Temporary test scripts have been removed to keep the repo tidy; you can manually exercise flows through the UI.
-- To demonstrate: create a customer, make a reservation, perform checkout to generate a bill, then mark the bill paid.
+Inside `config.py`:
+```python
+MYSQL_HOST = os.environ.get("MYSQL_HOST", "localhost")
+MYSQL_USER = os.environ.get("MYSQL_USER", "root")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "your_password_here")
+MYSQL_DB = os.environ.get("MYSQL_DB", "hotel_db")
+```
 
-Important files
+### 4. Running the Server
+Start the Flask development server seamlessly!
+```bash
+flask run
+# or
+python app.py
+```
+Navigate to `http://127.0.0.1:5000` in your web browser!
 
-- `app.py` — main Flask app and routes
-- `templates/` — Jinja2 templates for UI
-- `Static/style.css` — custom styling and hero image
-- `config.py` — database credentials (not checked in with sensitive values)
-- `requirements.txt` — Python dependencies
+## 📖 Application Flow Workflow
+1. **Home / Dashboard**: View navigation layout.
+2. **Make a Reservation**: Choose dates -> See available rooms -> Book.
+3. **Active Reservations**: View guests currently checked in.
+4. **Checkout**: Enter reservation ID, view the bill overview, finalize checkout, and make payments. The detailed bill logs securely into your history panel below the checkout module.
+5. **Customer Details**: Filter customers depending on live reservations or previous history.
 
-Routes (demo)
+---
 
-- `/` Home
-- `/reservation_start` Make a reservation (customer form)
-- `/available_rooms` List available rooms for chosen dates
-- `/room/<room_no>` View room and reserve
-- `/reservations` Active reservations
-- `/checkout` Admin checkout / bill generation
-- `/customers` Split view: current customers (with active reservations) and previous customers
-
-If you want, I can also:
-
-- Run a quick smoke test of the checkout/payment flow (needs a running MySQL instance with the expected schema).
-- Create a small SQL file with the expected table definitions for easier demo setup.
+*Designed for efficient workflows and aesthetic presentation.*

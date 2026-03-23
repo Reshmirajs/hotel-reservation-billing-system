@@ -61,8 +61,6 @@ def reservation_start():
     return render_template('reservation_start.html')
 
 
-
-
 # VIEW RESERVATIONS
 @app.route("/reservations")
 def reservations():
@@ -74,6 +72,7 @@ def reservations():
     r.check_in_date, r.check_out_date
     FROM Reservation r
     JOIN Customer c ON r.customer_id=c.customer_id
+    WHERE r.reservation_id NOT IN (SELECT b.reservation_id FROM Bill b JOIN Payment p ON b.bill_id = p.bill_id)
     """)
 
     data = cur.fetchall()
@@ -88,19 +87,29 @@ def customers_list():
         cur = mysql.connection.cursor()
         # customers with active reservations
         cur.execute('''
-            SELECT customer_id, first_name, last_name, street, city, pin, email, phone
+            SELECT c.customer_id, c.first_name, c.last_name, c.street, c.city, c.pin, c.email, c.phone
             FROM Customer c
-            WHERE EXISTS (SELECT 1 FROM Reservation r WHERE r.customer_id = c.customer_id)
-            ORDER BY customer_id DESC
+            WHERE EXISTS (
+                SELECT 1 FROM Reservation r 
+                WHERE r.customer_id = c.customer_id 
+                AND r.reservation_id NOT IN (SELECT b.reservation_id FROM Bill b JOIN Payment p ON b.bill_id = p.bill_id)
+            )
+            ORDER BY c.customer_id DESC
         ''')
         current_customers = cur.fetchall()
 
         # customers with no active reservations (previous customers)
         cur.execute('''
-            SELECT customer_id, first_name, last_name, street, city, pin, email, phone
+            SELECT c.customer_id, c.first_name, c.last_name, c.street, c.city, c.pin, c.email, c.phone
             FROM Customer c
-            WHERE NOT EXISTS (SELECT 1 FROM Reservation r WHERE r.customer_id = c.customer_id)
-            ORDER BY customer_id DESC
+            WHERE NOT EXISTS (
+                SELECT 1 FROM Reservation r 
+                WHERE r.customer_id = c.customer_id
+                AND r.reservation_id NOT IN (SELECT b.reservation_id FROM Bill b JOIN Payment p ON b.bill_id = p.bill_id)
+            ) AND EXISTS (
+                SELECT 1 FROM Reservation r WHERE r.customer_id = c.customer_id
+            )
+            ORDER BY c.customer_id DESC
         ''')
         previous_customers = cur.fetchall()
 
@@ -379,7 +388,18 @@ def checkout():
                        bill_id=bill_id,
                        reservation_id=reservation_id)
 
-    return render_template("checkout.html")
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        SELECT b.bill_id, b.reservation_id, c.first_name, c.last_name, 
+               b.payment_date, b.total_amount, p.amount, p.payment_mode, c.customer_id
+        FROM Bill b
+        JOIN Payment p ON b.bill_id = p.bill_id
+        JOIN Reservation r ON b.reservation_id = r.reservation_id
+        JOIN Customer c ON r.customer_id = c.customer_id
+        ORDER BY b.bill_id DESC
+    """)
+    history = cur.fetchall()
+    return render_template("checkout.html", history=history)
 
 
 # PAYMENT
@@ -420,9 +440,7 @@ def payment():
             r = cur.fetchone()
             room_no = r[0] if r else None
 
-            # delete reservation
-            cur.execute('DELETE FROM Reservation WHERE reservation_id=%s', (res_id,))
-            mysql.connection.commit()
+            # No longer deleting the reservation to preserve bill and payment history.
 
             # mark room available
             if room_no:

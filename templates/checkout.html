@@ -12,4 +12,39 @@
 			</div>
 		</form>
 	</div>
+
+  <div class="card mt-4">
+    <h2>Bills and Payments History</h2>
+    {% if history %}
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th>Bill ID</th>
+          <th>Reservation ID</th>
+          <th>Customer</th>
+          <th>Payment Date</th>
+          <th>Total Amount</th>
+          <th>Amount Paid</th>
+          <th>Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in history %}
+        <tr>
+          <td>B{{ d[0] }}</td>
+          <td><a href="{{ url_for('reservation_detail', reservation_id=d[1]) }}">R{{ d[1] }}</a></td>
+          <td><a href="{{ url_for('customer_detail', customer_id=d[8]) }}">{{ d[2] }} {{ d[3] }}</a></td>
+          <td>{{ d[4] }}</td>
+          <td>${{ d[5] }}</td>
+          <td>${{ d[6] }}</td>
+          <td>{{ d[7] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No bills or payments found.</p>
+    {% endif %}
+  </div>
+
 {% endblock %}
