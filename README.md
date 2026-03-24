@@ -1,22 +1,22 @@
-# 🏨 Grand Palace Hotel Management System
+# Hotel Management System
 
 A full-featured, lightweight **Hotel Management and Billing System** designed with Python, Flask, and MySQL. It features a beautifully simple dark-themed user interface, comprehensive database constraints for reliability, and a clean, maintainable codebase ready for localized deployment or production release using platforms like Vercel.
 
 ---
 
-## ✨ Features
+##  Features
 - **Live Room Bookings:** View available rooms dynamically, set check-in/check-out dates, and secure a reservation directly mapping to registered customers.
 - **Customer Management System:** Complete, persistent records of every customer who has stayed in the hotel. Track previous customers and current customers efficiently.
 - **Robust Billing & Payments:** An integrated checkout portal that automatically generates invoices based on room stay duration. Payments map directly to reservations avoiding data cascades, maintaining full historical billing records.
 - **CSV Exports:** Admins can export all active and historical customer records immediately to `.csv` data dumps.
 - **Minimal Server Dependencies:** Fast, light-weight back-end. Uses `PyMySQL` allowing serverless functionality without heavy system-level drivers.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 - **Backend**: Python 3.x, Flask
 - **Database**: MySQL 8.x, PyMySQL, cryptography
 - **Frontend**: HTML5, Vanilla CSS3 (Custom Dark/Glassmorphic aesthetics), Jinja2 Templating
 
-## 🗄️ Database Architecture
+## Database Architecture
 The system relies on five tightly-coupled relational tables:
 1. **`Customer`**: Core customer information (Name, Contact, Address, ID Proof).
 2. **`Room`**: Hotel inventory details (Room No, Type, Price, Availability Status).
@@ -26,7 +26,7 @@ The system relies on five tightly-coupled relational tables:
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1. Prerequisites
 Make sure to have the following installed locally on your system:
