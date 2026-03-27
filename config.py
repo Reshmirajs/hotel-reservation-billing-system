@@ -1,7 +1,5 @@
 import os
 from dotenv import load_dotenv
-
-# Load local .env filfle if it exists (ignored in Vercel production)
 load_dotenv()
 
 MYSQL_HOST = os.environ.get("MYSQL_HOST", "localhost")
