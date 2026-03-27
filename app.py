@@ -325,6 +325,20 @@ def reservation_detail(reservation_id):
     return render_template('reservation_detail.html', reservation=reservation, customer=customer)
 
 
+# Known amenity definitions (name + cost) — must match checkout.html values
+AMENITY_MAP = {
+    'breakfast':       {'name': 'Breakfast',        'cost': 350},
+    'airport_transfer':{'name': 'Airport Transfer', 'cost': 800},
+    'spa':             {'name': 'Spa & Wellness',   'cost': 1200},
+    'laundry':         {'name': 'Laundry Service',  'cost': 250},
+    'gym':             {'name': 'Gym Access',       'cost': 300},
+    'minibar':         {'name': 'Mini Bar',         'cost': 500},
+    'room_service':    {'name': 'Room Service',     'cost': 400},
+    'swimming_pool':   {'name': 'Swimming Pool',    'cost': 600},
+}
+
+GST_RATE = 0.12  # 12% GST (CGST 6% + SGST 6%)
+
 # CHECKOUT
 @app.route("/checkout", methods=["GET","POST"])
 def checkout():
@@ -375,13 +389,30 @@ def checkout():
         days = (out_date - check_in_date).days
         if days < 0:
             days = 0
-        total = days * price
+        room_total = days * price
+
+        # --- Amenities ---
+        selected_amenity_keys = request.form.getlist('amenity')
+        amenities = []
+        amenity_total = 0
+        for key in selected_amenity_keys:
+            if key in AMENITY_MAP:
+                info = AMENITY_MAP[key]
+                amenities.append({'name': info['name'], 'cost': info['cost']})
+                amenity_total += info['cost']
+
+        # --- GST Calculation ---
+        subtotal = room_total + amenity_total
+        gst_total = round(subtotal * GST_RATE, 2)
+        cgst = round(subtotal * GST_RATE / 2, 2)
+        sgst = round(subtotal * GST_RATE / 2, 2)
+        total = round(subtotal + gst_total, 2)
 
         try:
             cur.execute("""
             INSERT INTO Bill(reservation_id,payment_date,total_amount)
             VALUES(%s,CURDATE(),%s)
-            """,(reservation_id,total))
+            """,(reservation_id, total))
             mysql.connection.commit()
             bill_id = cur.lastrowid
         except Exception as e:
@@ -394,11 +425,9 @@ def checkout():
                     if existing:
                         bill_id = existing[0]
                         total = existing[1]
-                        # use stored payment_date as needed; days remain computed from dates
                     else:
                         raise
                 except Exception:
-                    # re-raise original
                     raise
             else:
                 raise
@@ -408,6 +437,13 @@ def checkout():
         return render_template("bill.html",
                        data=data,
                        days=days,
+                       room_total=room_total,
+                       amenities=amenities,
+                       amenity_total=amenity_total,
+                       subtotal=subtotal,
+                       cgst=cgst,
+                       sgst=sgst,
+                       gst_total=gst_total,
                        total=total,
                        bill_id=bill_id,
                        reservation_id=reservation_id)

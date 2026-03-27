@@ -10,7 +10,7 @@
       <div class="col-12 col-md-7">
         <p><strong>Room No:</strong> {{ room.room_no }}</p>
         <p><strong>Type:</strong> {{ room.room_type }}</p>
-        <p><strong>Price per night:</strong> {{ room.price }}</p>
+        <p><strong>Price per night:</strong> ₹{{ room.price }}</p>
         <p><strong>Status:</strong> {{ room.status }}</p>
       </div>
     </div>
@@ -18,7 +18,7 @@
 
   <div class="card mt-3">
     <h4>Reservation</h4>
-    <form method="POST" action="{{ url_for('room_detail', room_no=room.room_no) }}">
+    <form method="POST" action="{{ url_for('room_detail', room_no=room.room_no) }}" id="roomReservationForm" novalidate>
       {% if customer %}
         <p>Reserving as: <strong>{{ customer[1] }} {{ customer[2] }}</strong> (ID: C{{ customer[0] }})</p>
         <input type="hidden" name="customer_id" value="{{ customer[0] }}">
@@ -33,12 +33,63 @@
           <div class="col"><label>PIN</label><input name="pin" value="{{ request.args.get('pin', '') }}"></div>
         </div>
         <div class="form-row">
-          <div class="col"><label>Email</label><input name="email" type="email" value="{{ request.args.get('email', '') }}"></div>
-          <div class="col"><label>Phone</label><input name="phone" value="{{ request.args.get('phone', '') }}"></div>
+          <div class="col">
+            <label>Email</label>
+            <input id="emailInput" name="email" type="email" value="{{ request.args.get('email', '') }}" placeholder="example@gmail.com">
+            <span id="email_warn" class="field-warn"></span>
+          </div>
+          <div class="col">
+            <label>Phone</label>
+            <div class="phone-input-group">
+              <select id="countryCodeSelect" name="country_code" class="country-code-select">
+                <option value="+91">🇮🇳 +91 (India)</option>
+                <option value="+1">🇺🇸 +1 (USA)</option>
+                <option value="+44">🇬🇧 +44 (UK)</option>
+                <option value="+61">🇦🇺 +61 (Australia)</option>
+                <option value="+971">🇦🇪 +971 (UAE)</option>
+                <option value="+65">🇸🇬 +65 (Singapore)</option>
+                <option value="+60">🇲🇾 +60 (Malaysia)</option>
+                <option value="+64">🇳🇿 +64 (New Zealand)</option>
+                <option value="+49">🇩🇪 +49 (Germany)</option>
+                <option value="+33">🇫🇷 +33 (France)</option>
+                <option value="+39">🇮🇹 +39 (Italy)</option>
+                <option value="+34">🇪🇸 +34 (Spain)</option>
+                <option value="+81">🇯🇵 +81 (Japan)</option>
+                <option value="+86">🇨🇳 +86 (China)</option>
+                <option value="+82">🇰🇷 +82 (South Korea)</option>
+                <option value="+55">🇧🇷 +55 (Brazil)</option>
+                <option value="+27">🇿🇦 +27 (South Africa)</option>
+                <option value="+7">🇷🇺 +7 (Russia)</option>
+                <option value="+966">🇸🇦 +966 (Saudi Arabia)</option>
+                <option value="+94">🇱🇰 +94 (Sri Lanka)</option>
+                <option value="+92">🇵🇰 +92 (Pakistan)</option>
+                <option value="+880">🇧🇩 +880 (Bangladesh)</option>
+                <option value="+977">🇳🇵 +977 (Nepal)</option>
+                <option value="+95">🇲🇲 +95 (Myanmar)</option>
+                <option value="+66">🇹🇭 +66 (Thailand)</option>
+              </select>
+              <input id="phoneInput" name="phone" placeholder="Phone number" class="phone-number-input" value="{{ request.args.get('phone', '') }}">
+            </div>
+            <span id="phone_warn" class="field-warn"></span>
+          </div>
         </div>
         <div class="form-row">
-          <div class="col"><label>ID Proof Type</label><input name="id_proof_type" value="{{ request.args.get('id_proof_type', '') }}"></div>
-          <div class="col"><label>ID Proof Number</label><input name="id_proof_number" value="{{ request.args.get('id_proof_number', '') }}"></div>
+          <div class="col">
+            <label>ID Proof Type</label>
+            <select id="idProofTypeSelect" name="id_proof_type" class="custom-select w-100 p-2 border rounded" style="background:#fff8f2; border-color:#d4b896; color:#3d2b1f;" data-selected="{{ request.args.get('id_proof_type', 'Aadhaar') }}">
+              <option value="Aadhaar">Aadhaar Card</option>
+              <option value="PAN">PAN Card</option>
+              <option value="Passport">Passport (India)</option>
+              <option value="Voter ID">Voter ID</option>
+              <option value="Driving License">Driving License</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>ID Proof Number</label>
+            <input id="idProofNumberInput" name="id_proof_number" value="{{ request.args.get('id_proof_number', '') }}" placeholder="Enter ID Number" style="text-transform: uppercase;" required>
+            <span id="id_proof_warn" class="field-warn"></span>
+          </div>
         </div>
       {% endif %}
 
@@ -65,7 +116,7 @@
   </div>
 
 <style>
-  .date-warn {
+  .date-warn, .field-warn {
     display: block;
     color: #c0392b;
     background: #fdf0ef;
@@ -76,7 +127,34 @@
     font-size: 13px;
     font-weight: 500;
   }
-  .date-warn:empty { display: none; }
+  .date-warn:empty, .field-warn:empty { display: none; }
+
+  .phone-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .country-code-select {
+    flex: 0 0 auto;
+    width: 130px;
+    padding: 8px 4px;
+    border: 1px solid #d4b896;
+    border-radius: 6px;
+    background: #fff;
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .phone-number-input {
+    flex: 1;
+    min-width: 0;
+  }
+  .country-code-select:focus {
+    outline: none;
+    border-color: var(--accent, #8b5e3c);
+    box-shadow: 0 0 0 3px rgba(139,94,60,0.15);
+  }
 </style>
 
 <script>
@@ -87,10 +165,61 @@
     var checkOutEl  = document.getElementById('check_out');
     var checkInWarn  = document.getElementById('check_in_warn');
     var checkOutWarn = document.getElementById('check_out_warn');
+    var emailInput = document.getElementById('emailInput');
+    var emailWarn  = document.getElementById('email_warn');
+    var phoneInput = document.getElementById('phoneInput');
+    var phoneWarn  = document.getElementById('phone_warn');
+
+    var idTypeSelect = document.getElementById('idProofTypeSelect');
+    var idNumberInput= document.getElementById('idProofNumberInput');
+    var idWarn       = document.getElementById('id_proof_warn');
 
     // Set the minimum for both fields to today on load
-    if (!checkInEl.min) checkInEl.min = today;
-    if (!checkOutEl.min) checkOutEl.min = today;
+    if (checkInEl && !checkInEl.min) checkInEl.min = today;
+    if (checkOutEl && !checkOutEl.min) checkOutEl.min = today;
+
+    if (idTypeSelect && idTypeSelect.dataset.selected) {
+      var found = Array.from(idTypeSelect.options).some(opt => opt.value === idTypeSelect.dataset.selected);
+      idTypeSelect.value = found ? idTypeSelect.dataset.selected : 'Other';
+    }
+
+    /* ---- ID Proof validation ---- */
+    function validateIdProof() {
+      if (!idTypeSelect || !idNumberInput) return true;
+      var type = idTypeSelect.value;
+      var val = idNumberInput.value.trim().toUpperCase();
+      if(val !== idNumberInput.value) { idNumberInput.value = val; }
+
+      if (!val) {
+        idWarn.textContent = '⚠ ID Proof number is required.';
+        idNumberInput.setCustomValidity('Required.');
+        return false;
+      }
+
+      var isValid = true;
+      var errMsg = '';
+
+      if (type === 'Aadhaar') {
+        if (!/^\d{12}$/.test(val)) { isValid = false; errMsg = 'Aadhaar must be exactly 12 digits.'; }
+      } else if (type === 'PAN') {
+        if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(val)) { isValid = false; errMsg = 'Invalid PAN format (e.g. ABCDE1234F).'; }
+      } else if (type === 'Passport') {
+        if (!/^[A-Z][0-9]{7}$/.test(val)) { isValid = false; errMsg = 'Passport must be 1 letter followed by 7 digits.'; }
+      } else if (type === 'Voter ID') {
+        if (!/^[A-Z]{3}[0-9]{7}$/.test(val)) { isValid = false; errMsg = 'Voter ID is typically 3 letters + 7 digits.'; }
+      } else if (type === 'Driving License') {
+        if (val.length < 10) { isValid = false; errMsg = 'Driving License format is too short.'; }
+      }
+
+      if (!isValid) {
+        idWarn.textContent = '⚠ ' + errMsg;
+        idNumberInput.setCustomValidity(errMsg);
+        return false;
+      }
+      idWarn.textContent = '';
+      idNumberInput.setCustomValidity('');
+      return true;
+    }
 
     function validateCheckIn() {
       var val = checkInEl.value;
@@ -126,14 +255,86 @@
       return true;
     }
 
-    checkInEl.addEventListener('change', validateCheckIn);
-    checkInEl.addEventListener('input',  validateCheckIn);
-    checkOutEl.addEventListener('change', validateCheckOut);
-    checkOutEl.addEventListener('input',  validateCheckOut);
+    /* ---- Email validation ---- */
+    function validateEmail() {
+      if (!emailInput) return true;
+      var val = emailInput.value.trim();
+      if (!val) { emailWarn.textContent = ''; emailInput.setCustomValidity(''); return true; }
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailRegex.test(val)) {
+        emailWarn.textContent = '⚠ Please enter a valid email (e.g. name@gmail.com).';
+        emailInput.setCustomValidity('Invalid email address.');
+        return false;
+      }
+      emailWarn.textContent = '';
+      emailInput.setCustomValidity('');
+      return true;
+    }
+
+    /* ---- Phone validation ---- */
+    function validatePhone() {
+      if (!phoneInput) return true;
+      var val = phoneInput.value.trim().replace(/[\s\-\(\)]/g, '');
+      if (!val) { phoneWarn.textContent = ''; phoneInput.setCustomValidity(''); return true; }
+      var phoneRegex = /^\d{7,15}$/;
+      if (!phoneRegex.test(val)) {
+        phoneWarn.textContent = '⚠ Phone number must be 7–15 digits (no spaces or dashes).';
+        phoneInput.setCustomValidity('Invalid phone number.');
+        return false;
+      }
+      phoneWarn.textContent = '';
+      phoneInput.setCustomValidity('');
+      return true;
+    }
+
+    if (checkInEl) {
+      checkInEl.addEventListener('change', validateCheckIn);
+      checkInEl.addEventListener('input',  validateCheckIn);
+    }
+    if (checkOutEl) {
+      checkOutEl.addEventListener('change', validateCheckOut);
+      checkOutEl.addEventListener('input',  validateCheckOut);
+    }
+
+    if (emailInput) {
+      emailInput.addEventListener('input', validateEmail);
+      emailInput.addEventListener('blur',  validateEmail);
+    }
+    if (phoneInput) {
+      phoneInput.addEventListener('input', validatePhone);
+      phoneInput.addEventListener('blur',  validatePhone);
+    }
+    if (idNumberInput) {
+      idNumberInput.addEventListener('input', validateIdProof);
+      idNumberInput.addEventListener('blur', validateIdProof);
+    }
+    if (idTypeSelect) {
+      idTypeSelect.addEventListener('change', validateIdProof);
+    }
 
     // Run on load in case values are pre-filled
-    validateCheckIn();
-    validateCheckOut();
+    if (checkInEl) validateCheckIn();
+    if (checkOutEl) validateCheckOut();
+    if (idNumberInput) validateIdProof();
+
+    /* ---- On submit: combine country code + phone number ---- */
+    document.getElementById('roomReservationForm').addEventListener('submit', function(e) {
+      var valid = true;
+      if (checkInEl && !validateCheckIn()) valid = false;
+      if (checkOutEl && !validateCheckOut()) valid = false;
+      if (!validateEmail()) valid = false;
+      if (!validatePhone()) valid = false;
+      if (!validateIdProof()) valid = false;
+      if (!valid) { e.preventDefault(); return; }
+
+      var ccSelect = document.getElementById('countryCodeSelect');
+      if (ccSelect && phoneInput) {
+        var code   = ccSelect.value;
+        var number = phoneInput.value.trim().replace(/[\s\-\(\)]/g, '');
+        phoneInput.value = code + number;
+        ccSelect.disabled = true;
+      }
+    });
   })();
 </script>
 {% endblock %}

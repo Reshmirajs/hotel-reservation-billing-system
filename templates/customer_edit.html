@@ -4,7 +4,7 @@
   <div class="card">
     <h2>Edit Customer</h2>
     {% if customer %}
-    <form method="POST">
+    <form method="POST" id="editCustomerForm" novalidate>
       <h5>Personal Information</h5>
       <div class="form-row">
         <div class="col"><label>First name</label><input name="first_name" value="{{ customer[1] }}"></div>
@@ -20,23 +20,255 @@
 
       <h5 class="mt-3">Contact Information</h5>
       <div class="form-row">
-        <div class="col"><label>Email</label><input name="email" value="{{ customer[6] }}"></div>
-        <div class="col"><label>Phone</label><input name="phone" value="{{ customer[7] }}"></div>
+        <div class="col">
+          <label>Email</label>
+          <input id="emailInput" name="email" type="email" value="{{ customer[6] }}" placeholder="example@gmail.com">
+          <span id="email_warn" class="field-warn"></span>
+        </div>
+        <div class="col">
+          <label>Phone</label>
+          <div class="phone-input-group">
+            <select id="countryCodeSelect" name="country_code" class="country-code-select">
+              <option value="+91">🇮🇳 +91 (India)</option>
+              <option value="+1">🇺🇸 +1 (USA)</option>
+              <option value="+44">🇬🇧 +44 (UK)</option>
+              <option value="+61">🇦🇺 +61 (Australia)</option>
+              <option value="+971">🇦🇪 +971 (UAE)</option>
+              <option value="+65">🇸🇬 +65 (Singapore)</option>
+              <option value="+60">🇲🇾 +60 (Malaysia)</option>
+              <option value="+64">🇳🇿 +64 (New Zealand)</option>
+              <option value="+49">🇩🇪 +49 (Germany)</option>
+              <option value="+33">🇫🇷 +33 (France)</option>
+              <option value="+39">🇮🇹 +39 (Italy)</option>
+              <option value="+34">🇪🇸 +34 (Spain)</option>
+              <option value="+81">🇯🇵 +81 (Japan)</option>
+              <option value="+86">🇨🇳 +86 (China)</option>
+              <option value="+82">🇰🇷 +82 (South Korea)</option>
+              <option value="+55">🇧🇷 +55 (Brazil)</option>
+              <option value="+27">🇿🇦 +27 (South Africa)</option>
+              <option value="+7">🇷🇺 +7 (Russia)</option>
+              <option value="+966">🇸🇦 +966 (Saudi Arabia)</option>
+              <option value="+94">🇱🇰 +94 (Sri Lanka)</option>
+              <option value="+92">🇵🇰 +92 (Pakistan)</option>
+              <option value="+880">🇧🇩 +880 (Bangladesh)</option>
+              <option value="+977">🇳🇵 +977 (Nepal)</option>
+              <option value="+95">🇲🇲 +95 (Myanmar)</option>
+              <option value="+66">🇹🇭 +66 (Thailand)</option>
+            </select>
+            <input id="phoneInput" name="phone" placeholder="Phone number" class="phone-number-input" value="{{ customer[7] }}">
+          </div>
+          <span id="phone_warn" class="field-warn"></span>
+        </div>
       </div>
 
       <h5 class="mt-3">ID Proof</h5>
       <div class="form-row">
-        <div class="col"><label>ID proof type</label><input name="id_proof_type" value="{{ customer[8] }}"></div>
-        <div class="col"><label>ID proof number</label><input name="id_proof_number" value="{{ customer[9] }}"></div>
+        <div class="col">
+          <label>ID Proof Type</label>
+          <select id="idProofTypeSelect" name="id_proof_type" class="custom-select w-100 p-2 border rounded" style="background:#fff8f2; border-color:#d4b896; color:#3d2b1f;" data-selected="{{ customer[8] }}">
+            <option value="Aadhaar">Aadhaar Card</option>
+            <option value="PAN">PAN Card</option>
+            <option value="Passport">Passport (India)</option>
+            <option value="Voter ID">Voter ID</option>
+            <option value="Driving License">Driving License</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col">
+          <label>ID Proof Number</label>
+          <input id="idProofNumberInput" name="id_proof_number" value="{{ customer[9] }}" placeholder="Enter ID Number" style="text-transform: uppercase;" required>
+          <span id="id_proof_warn" class="field-warn"></span>
+        </div>
       </div>
 
-      <div class="mt-2">
-        <button class="btn" type="submit">Save</button>
-        <a href="{{ url_for('customer_detail', customer_id=customer[0]) }}" class="btn btn-outline">Cancel</a>
+      <div class="mt-3">
+        <button class="btn" type="submit">Save Changes</button>
+        <a href="{{ url_for('customer_detail', customer_id=customer[0]) }}" class="btn btn-outline" style="margin-left:8px;">Cancel</a>
       </div>
     </form>
     {% else %}
       <p>Customer not found.</p>
     {% endif %}
   </div>
+
+<style>
+  .field-warn {
+    display: block;
+    color: #c0392b;
+    background: #fdf0ef;
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .field-warn:empty { display: none; }
+
+  .phone-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .country-code-select {
+    flex: 0 0 auto;
+    width: 130px;
+    padding: 8px 4px;
+    border: 1px solid #d4b896;
+    border-radius: 6px;
+    background: #fff;
+    color: #000;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .phone-number-input {
+    flex: 1;
+    min-width: 0;
+  }
+  .country-code-select:focus {
+    outline: none;
+    border-color: var(--accent, #8b5e3c);
+    box-shadow: 0 0 0 3px rgba(139,94,60,0.15);
+  }
+</style>
+
+<script>
+  (function () {
+    var emailInput = document.getElementById('emailInput');
+    var emailWarn  = document.getElementById('email_warn');
+    var phoneInput = document.getElementById('phoneInput');
+    var phoneWarn  = document.getElementById('phone_warn');
+    var ccSelect   = document.getElementById('countryCodeSelect');
+    var idTypeSelect = document.getElementById('idProofTypeSelect');
+    var idNumberInput= document.getElementById('idProofNumberInput');
+    var idWarn       = document.getElementById('id_proof_warn');
+
+    if (idTypeSelect && idTypeSelect.dataset.selected) {
+      var found = Array.from(idTypeSelect.options).some(opt => opt.value === idTypeSelect.dataset.selected);
+      idTypeSelect.value = found ? idTypeSelect.dataset.selected : 'Other';
+    }
+
+    /* ---- ID Proof validation ---- */
+    function validateIdProof() {
+      if (!idTypeSelect || !idNumberInput) return true;
+      var type = idTypeSelect.value;
+      var val = idNumberInput.value.trim().toUpperCase();
+      if(val !== idNumberInput.value) { idNumberInput.value = val; }
+
+      if (!val) {
+        idWarn.textContent = '⚠ ID Proof number is required.';
+        idNumberInput.setCustomValidity('Required.');
+        return false;
+      }
+
+      var isValid = true;
+      var errMsg = '';
+
+      if (type === 'Aadhaar') {
+        if (!/^\d{12}$/.test(val)) { isValid = false; errMsg = 'Aadhaar must be exactly 12 digits.'; }
+      } else if (type === 'PAN') {
+        if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(val)) { isValid = false; errMsg = 'Invalid PAN format (e.g. ABCDE1234F).'; }
+      } else if (type === 'Passport') {
+        if (!/^[A-Z][0-9]{7}$/.test(val)) { isValid = false; errMsg = 'Passport must be 1 letter followed by 7 digits.'; }
+      } else if (type === 'Voter ID') {
+        if (!/^[A-Z]{3}[0-9]{7}$/.test(val)) { isValid = false; errMsg = 'Voter ID is typically 3 letters + 7 digits.'; }
+      } else if (type === 'Driving License') {
+        if (val.length < 10) { isValid = false; errMsg = 'Driving License format is too short.'; }
+      }
+
+      if (!isValid) {
+        idWarn.textContent = '⚠ ' + errMsg;
+        idNumberInput.setCustomValidity(errMsg);
+        return false;
+      }
+      idWarn.textContent = '';
+      idNumberInput.setCustomValidity('');
+      return true;
+    }
+
+    // Attempt to split pre-filled phone number into country code + raw number if it starts with +
+    if (phoneInput && phoneInput.value && phoneInput.value.startsWith('+')) {
+      var val = phoneInput.value;
+      // check if any option value matches the start of the string (longest first)
+      var codes = Array.from(ccSelect.options).map(function(opt) { return opt.value; }).sort(function(a,b) { return b.length - a.length; });
+      for (var i = 0; i < codes.length; i++) {
+        if (val.startsWith(codes[i])) {
+          ccSelect.value = codes[i];
+          phoneInput.value = val.substring(codes[i].length);
+          break;
+        }
+      }
+    }
+
+    /* ---- Email validation ---- */
+    function validateEmail() {
+      if (!emailInput) return true;
+      var val = emailInput.value.trim();
+      if (!val) { emailWarn.textContent = ''; emailInput.setCustomValidity(''); return true; }
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailRegex.test(val)) {
+        emailWarn.textContent = '⚠ Please enter a valid email (e.g. name@gmail.com).';
+        emailInput.setCustomValidity('Invalid email address.');
+        return false;
+      }
+      emailWarn.textContent = '';
+      emailInput.setCustomValidity('');
+      return true;
+    }
+
+    /* ---- Phone validation ---- */
+    function validatePhone() {
+      if (!phoneInput) return true;
+      var val = phoneInput.value.trim().replace(/[\s\-\(\)]/g, '');
+      if (!val) { phoneWarn.textContent = ''; phoneInput.setCustomValidity(''); return true; }
+      var phoneRegex = /^\d{7,15}$/;
+      if (!phoneRegex.test(val)) {
+        phoneWarn.textContent = '⚠ Phone number must be 7–15 digits (no spaces or dashes).';
+        phoneInput.setCustomValidity('Invalid phone number.');
+        return false;
+      }
+      phoneWarn.textContent = '';
+      phoneInput.setCustomValidity('');
+      return true;
+    }
+
+    if (emailInput) {
+      emailInput.addEventListener('input', validateEmail);
+      emailInput.addEventListener('blur',  validateEmail);
+    }
+    if (phoneInput) {
+      phoneInput.addEventListener('input', validatePhone);
+      phoneInput.addEventListener('blur',  validatePhone);
+    }
+    if (idNumberInput) {
+      idNumberInput.addEventListener('input', validateIdProof);
+      idNumberInput.addEventListener('blur', validateIdProof);
+    }
+    if (idTypeSelect) {
+      idTypeSelect.addEventListener('change', validateIdProof);
+    }
+
+    if (idNumberInput) validateIdProof();
+
+    // Form logic
+    var form = document.getElementById('editCustomerForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        var valid = true;
+        if (!validateEmail()) valid = false;
+        if (!validatePhone()) valid = false;
+        if (!validateIdProof()) valid = false;
+        if (!valid) { e.preventDefault(); return; }
+
+        if (ccSelect && phoneInput) {
+          var code   = ccSelect.value;
+          var number = phoneInput.value.trim().replace(/[\s\-\(\)]/g, '');
+          phoneInput.value = code + number;
+          ccSelect.disabled = true;
+        }
+      });
+    }
+  })();
+</script>
 {% endblock %}

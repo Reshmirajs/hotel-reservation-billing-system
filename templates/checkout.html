@@ -3,12 +3,88 @@
 {% block content %}
 	<div class="card align-center">
 		<h2>Checkout Customer</h2>
-		<form method="POST">
-			<div style="max-width:320px;margin:0 auto">
-				<input name="reservation_id" placeholder="Reservation ID">
-				<label class="mt-2">Actual Check Out Date (leave empty to use expected)</label>
+		<form method="POST" id="checkoutForm">
+			<div style="max-width:480px;margin:0 auto">
+				<label>Reservation ID</label>
+				<input name="reservation_id" placeholder="Reservation ID (e.g. R12 or 12)">
+
+				<label class="mt-2">Actual Check Out Date <span style="font-weight:400;font-size:13px">(leave empty to use expected)</span></label>
 				<input type="date" name="actual_check_out">
-				<div class="mt-2"><button class="btn" type="submit">Generate Bill (Checkout)</button></div>
+
+				<!-- ===== Additional Amenities ===== -->
+				<div class="amenities-section mt-3">
+					<h5 class="amenities-title">🛎 Additional Amenities</h5>
+					<p class="amenities-subtitle">Select any extra services the guest used:</p>
+					<div class="amenities-grid">
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="breakfast" data-cost="350" class="amenity-check">
+							<span class="amenity-icon">🍳</span>
+							<span class="amenity-name">Breakfast</span>
+							<span class="amenity-cost">₹350 / day</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="airport_transfer" data-cost="800" class="amenity-check">
+							<span class="amenity-icon">🚖</span>
+							<span class="amenity-name">Airport Transfer</span>
+							<span class="amenity-cost">₹800</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="spa" data-cost="1200" class="amenity-check">
+							<span class="amenity-icon">💆</span>
+							<span class="amenity-name">Spa & Wellness</span>
+							<span class="amenity-cost">₹1,200</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="laundry" data-cost="250" class="amenity-check">
+							<span class="amenity-icon">👔</span>
+							<span class="amenity-name">Laundry Service</span>
+							<span class="amenity-cost">₹250</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="gym" data-cost="300" class="amenity-check">
+							<span class="amenity-icon">🏋️</span>
+							<span class="amenity-name">Gym Access</span>
+							<span class="amenity-cost">₹300</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="minibar" data-cost="500" class="amenity-check">
+							<span class="amenity-icon">🍷</span>
+							<span class="amenity-name">Mini Bar</span>
+							<span class="amenity-cost">₹500</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="room_service" data-cost="400" class="amenity-check">
+							<span class="amenity-icon">🍽️</span>
+							<span class="amenity-name">Room Service</span>
+							<span class="amenity-cost">₹400</span>
+						</label>
+
+						<label class="amenity-card">
+							<input type="checkbox" name="amenity" value="swimming_pool" data-cost="600" class="amenity-check">
+							<span class="amenity-icon">🏊</span>
+							<span class="amenity-name">Swimming Pool</span>
+							<span class="amenity-cost">₹600</span>
+						</label>
+
+					</div>
+
+					<!-- Selected amenities cost summary -->
+					<div class="amenity-total-bar" id="amenityTotalBar" style="display:none">
+						<span>Selected Amenities Total:</span>
+						<strong id="amenityTotalDisplay">₹0</strong>
+						<input type="hidden" name="amenity_total" id="amenityTotalInput" value="0">
+					</div>
+				</div>
+				<!-- ================================ -->
+
+				<div class="mt-3"><button class="btn" type="submit">Generate Bill (Checkout)</button></div>
 			</div>
 		</form>
 	</div>
@@ -35,8 +111,8 @@
           <td><a href="{{ url_for('reservation_detail', reservation_id=d[1]) }}">R{{ d[1] }}</a></td>
           <td><a href="{{ url_for('customer_detail', customer_id=d[8]) }}">{{ d[2] }} {{ d[3] }}</a></td>
           <td>{{ d[4] }}</td>
-          <td>${{ d[5] }}</td>
-          <td>${{ d[6] }}</td>
+          <td>₹{{ d[5] }}</td>
+          <td>₹{{ d[6] }}</td>
           <td>{{ d[7] }}</td>
         </tr>
         {% endfor %}
@@ -46,5 +122,116 @@
       <p>No bills or payments found.</p>
     {% endif %}
   </div>
+
+<style>
+  /* ---- Amenities ---- */
+  .amenities-section {
+    background: linear-gradient(135deg, #fff8f2 0%, #fdf3e7 100%);
+    border: 1px solid #e8d5be;
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: left;
+  }
+  .amenities-title {
+    margin: 0 0 4px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent, #8b5e3c);
+  }
+  .amenities-subtitle {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: #7a6552;
+  }
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .amenity-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 10px;
+    background: #fff;
+    border: 2px solid #e8d5be;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    text-align: center;
+    user-select: none;
+  }
+  .amenity-card:hover {
+    border-color: var(--accent, #8b5e3c);
+    box-shadow: 0 2px 12px rgba(139,94,60,0.15);
+    transform: translateY(-2px);
+  }
+  .amenity-card input[type="checkbox"] {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent, #8b5e3c);
+  }
+  .amenity-card.selected {
+    border-color: var(--accent, #8b5e3c);
+    background: linear-gradient(135deg, #fff8f2, #fdebd8);
+    box-shadow: 0 2px 14px rgba(139,94,60,0.2);
+  }
+  .amenity-icon { font-size: 26px; }
+  .amenity-name { font-size: 13px; font-weight: 600; color: #3d2b1f; }
+  .amenity-cost { font-size: 12px; color: #8b5e3c; font-weight: 500; }
+  .amenity-total-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding: 10px 16px;
+    background: #3d2b1f;
+    color: #fff8f2;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .amenity-total-bar strong {
+    font-size: 16px;
+    color: #f5c98a;
+  }
+</style>
+
+<script>
+  (function() {
+    var checks = document.querySelectorAll('.amenity-check');
+    var bar    = document.getElementById('amenityTotalBar');
+    var display= document.getElementById('amenityTotalDisplay');
+    var input  = document.getElementById('amenityTotalInput');
+
+    function recalc() {
+      var total = 0;
+      checks.forEach(function(cb) {
+        var card = cb.closest('.amenity-card');
+        if (cb.checked) {
+          total += parseInt(cb.dataset.cost || 0, 10);
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      });
+      input.value = total;
+      if (total > 0) {
+        bar.style.display = 'flex';
+        display.textContent = '₹' + total.toLocaleString('en-IN');
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    checks.forEach(function(cb) {
+      cb.addEventListener('change', recalc);
+    });
+  })();
+</script>
 
 {% endblock %}
